@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OmniMCP | Universal MCP Hub & Agent Playground</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body { background-color: #0b0f17; color: #f3f4f6; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    .glass { background: rgba(17, 24, 39, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+    .pulse-dot { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+  </style>
+</head>
+<body class="min-h-screen p-4 md:p-8">
+
+  <!-- Header -->
+  <header class="max-w-7xl mx-auto mb-8 flex flex-col md:flex-row items-center justify-between gap-4 glass rounded-2xl p-6">
+    <div class="flex items-center gap-3">
+      <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-fuchsia-600 to-indigo-600 flex items-center justify-center text-white text-2xl shadow-lg shadow-fuchsia-500/20">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <h1 class="text-2xl font-bold tracking-tight text-white">OmniMCP</h1>
+          <span class="text-xs px-2.5 py-0.5 rounded-full bg-fuchsia-500/20 text-fuchsia-400 font-semibold border border-fuchsia-500/30">Universal MCP Hub</span>
+          <span class="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-semibold border border-emerald-500/30">v1.0.0</span>
+        </div>
+        <p class="text-xs text-gray-400">1nsharma-labs &bull; Autonomous Agent Workspace for Desktop, Mobile & CLI</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2 text-xs text-emerald-400 bg-emerald-950/40 border border-emerald-800/40 px-3 py-1.5 rounded-lg">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 pulse-dot"></span>
+        <span>MCP Hub Online (Port 9090)</span>
+      </div>
+      <a href="https://github.com/1nsharma-labs/omnimcp" target="_blank" class="px-4 py-2 rounded-xl bg-gray-800 hover:bg-gray-700 text-xs font-semibold text-gray-200 border border-gray-700 transition flex items-center gap-2">
+        <i class="fa-brands fa-github text-sm"></i> GitHub
+      </a>
+      <a href="https://github.com/sponsors/1nsharma" target="_blank" class="px-4 py-2 rounded-xl bg-pink-600 hover:bg-pink-500 text-xs font-semibold text-white shadow-lg shadow-pink-600/30 transition flex items-center gap-2">
+        <i class="fa-solid fa-heart text-xs"></i> Sponsor
+      </a>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto space-y-6">
+
+    <!-- KPI Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div class="glass p-5 rounded-2xl">
+        <div class="text-xs uppercase tracking-wider font-semibold text-gray-400 mb-1">Registered MCP Tools</div>
+        <div class="text-3xl font-extrabold text-fuchsia-400" id="tool-count">11 Tools</div>
+        <p class="text-xs text-gray-400 mt-1">Mobile, Desktop, Workspace, Memory</p>
+      </div>
+
+      <div class="glass p-5 rounded-2xl">
+        <div class="text-xs uppercase tracking-wider font-semibold text-gray-400 mb-1">Supported Transports</div>
+        <div class="text-3xl font-extrabold text-cyan-400">Stdio & HTTP</div>
+        <p class="text-xs text-gray-400 mt-1">Claude Desktop, Cursor, Cline, Web</p>
+      </div>
+
+      <div class="glass p-5 rounded-2xl">
+        <div class="text-xs uppercase tracking-wider font-semibold text-gray-400 mb-1">Mobile ADB Driver</div>
+        <div class="text-3xl font-extrabold text-emerald-400">Ready</div>
+        <p class="text-xs text-gray-400 mt-1">Touch, Text Input, Screenshots</p>
+      </div>
+
+      <div class="glass p-5 rounded-2xl">
+        <div class="text-xs uppercase tracking-wider font-semibold text-gray-400 mb-1">Agent Memory Mesh</div>
+        <div class="text-3xl font-extrabold text-indigo-400">SQLite Node 24</div>
+        <p class="text-xs text-gray-400 mt-1">Persistent cross-agent scratchpad</p>
+      </div>
+    </div>
+
+    <!-- Playground Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+
+      <!-- Left Sidebar: Tools Navigator -->
+      <div class="md:col-span-4 glass p-6 rounded-2xl space-y-4">
+        <h2 class="text-base font-bold text-white flex items-center gap-2">
+          <i class="fa-solid fa-toolbox text-fuchsia-400"></i> Available MCP Tools
+        </h2>
+        <div id="tools-list" class="space-y-2 max-h-[500px] overflow-y-auto pr-1">
+          <!-- Dynamic tools list -->
+        </div>
+      </div>
+
+      <!-- Right Area: Interactive Tester -->
+      <div class="md:col-span-8 glass p-6 rounded-2xl space-y-4">
+        <div class="flex items-center justify-between border-b border-gray-800 pb-4">
+          <div>
+            <h3 class="text-lg font-bold text-white" id="selected-tool-name">mobile_devices</h3>
+            <p class="text-xs text-gray-400" id="selected-tool-desc">Lists all physically attached Android devices and active emulators.</p>
+          </div>
+          <span class="px-2.5 py-1 rounded bg-fuchsia-500/20 text-fuchsia-400 text-xs font-bold" id="selected-tool-badge">MCP Tool</span>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-gray-300 mb-2">Input Arguments (JSON)</label>
+          <textarea id="tool-args-input" rows="4" class="w-full bg-gray-900 border border-gray-700 rounded-xl p-3 font-mono text-xs text-gray-200 focus:outline-none focus:border-fuchsia-500 transition">{}</textarea>
+        </div>
+
+        <button id="exec-tool-btn" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-fuchsia-600 to-indigo-600 hover:from-fuchsia-500 hover:to-indigo-500 text-white font-bold text-xs shadow-lg shadow-fuchsia-500/20 transition flex items-center gap-2">
+          <i class="fa-solid fa-play"></i> Execute via MCP
+        </button>
+
+        <!-- Response Viewer -->
+        <div>
+          <label class="block text-xs font-semibold text-gray-300 mb-2">MCP JSON-RPC Output</label>
+          <pre id="tool-output" class="w-full bg-black/60 border border-gray-800 rounded-xl p-4 font-mono text-xs text-emerald-400 overflow-x-auto min-h-[160px] max-h-[300px]">{ "status": "Ready to execute" }</pre>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Client Configs Guide -->
+    <div class="glass p-6 rounded-2xl space-y-4">
+      <h3 class="text-base font-bold text-white flex items-center gap-2">
+        <i class="fa-solid fa-plug text-cyan-400"></i> Connect to Claude Desktop & Cursor
+      </h3>
+      <p class="text-xs text-gray-400">Add OmniMCP to your <code class="text-fuchsia-400">claude_desktop_config.json</code> or Cursor MCP settings with 1 copy-paste:</p>
+      
+      <div class="bg-black/60 border border-gray-800 rounded-xl p-4 font-mono text-xs text-gray-300 relative">
+        <button onclick="navigator.clipboard.writeText(document.getElementById('claude-cfg').innerText); alert('Config copied!')" class="absolute top-3 right-3 px-2 py-1 rounded bg-gray-800 hover:bg-gray-700 text-gray-300 text-[11px]">Copy JSON</button>
+        <pre id="claude-cfg">{
+  "mcpServers": {
+    "omnimcp": {
+      "command": "npx",
+      "args": ["-y", "@1nsharma-labs/omnimcp", "stdio"]
+    }
+  }
+}</pre>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    const TOOLS_CATALOG = [
+      { name: 'mobile_devices', category: 'Mobile', desc: 'Lists attached Android devices and emulators.', sample: {} },
+      { name: 'mobile_tap', category: 'Mobile', desc: 'Performs touch screen tap at (x, y) coordinates.', sample: { x: 540, y: 1200 } },
+      { name: 'mobile_type', category: 'Mobile', desc: 'Types text into active input field on phone.', sample: { text: 'Hello from OmniMCP' } },
+      { name: 'mobile_screenshot', category: 'Mobile', desc: 'Captures high-res screen buffer from mobile phone.', sample: {} },
+      { name: 'workspace_tree', category: 'Workspace', desc: 'Returns directory file tree respecting gitignore.', sample: { maxDepth: 2 } },
+      { name: 'workspace_search', category: 'Workspace', desc: 'Regex searches codebase files with line numbers.', sample: { query: 'TokenArmor' } },
+      { name: 'workspace_tokens', category: 'Workspace', desc: 'Measures exact token budget to prevent context overflow.', sample: { text: 'Sample prompt string for token estimation' } },
+      { name: 'desktop_info', category: 'Desktop', desc: 'Returns host OS, CPU cores, RAM, and architecture.', sample: {} },
+      { name: 'desktop_notify', category: 'Desktop', desc: 'Dispatches native desktop popup notification.', sample: { title: 'OmniMCP Alert', message: 'Autonomous task completed!' } },
+      { name: 'memory_save', category: 'Memory', desc: 'Persistently stores insight in cross-agent SQLite mesh.', sample: { key: 'auth_token', value: 'secret_123', category: 'auth' } },
+      { name: 'memory_recall', category: 'Memory', desc: 'Retrieves memories by exact key or keyword query.', sample: { query: 'auth_token' } }
+    ];
+
+    let currentTool = TOOLS_CATALOG[0];
+
+    function renderToolsList() {
+      const listEl = document.getElementById('tools-list');
+      listEl.innerHTML = TOOLS_CATALOG.map((t, idx) => `
+        <div onclick="selectTool(${idx})" class="p-3 rounded-xl border transition cursor-pointer ${currentTool.name === t.name ? 'bg-fuchsia-950/30 border-fuchsia-500/40 text-white' : 'bg-gray-900/60 border-gray-800 text-gray-300 hover:border-gray-700'}">
+          <div class="flex items-center justify-between">
+            <span class="font-mono text-xs font-bold">${t.name}</span>
+            <span class="text-[10px] px-2 py-0.5 rounded font-semibold bg-gray-800 text-gray-400">${t.category}</span>
+          </div>
+          <p class="text-[11px] text-gray-400 mt-1 truncate">${t.desc}</p>
+        </div>
+      `).join('');
+    }
+
+    function selectTool(index) {
+      currentTool = TOOLS_CATALOG[index];
+      document.getElementById('selected-tool-name').innerText = currentTool.name;
+      document.getElementById('selected-tool-desc').innerText = currentTool.desc;
+      document.getElementById('selected-tool-badge').innerText = currentTool.category + ' Tool';
+      document.getElementById('tool-args-input').value = JSON.stringify(currentTool.sample, null, 2);
+      renderToolsList();
+    }
+
+    document.getElementById('exec-tool-btn').addEventListener('click', async () => {
+      const outputEl = document.getElementById('tool-output');
+      outputEl.innerText = 'Executing via MCP JSON-RPC...';
+
+      let parsedArgs = {};
+      try {
+        parsedArgs = JSON.parse(document.getElementById('tool-args-input').value || '{}');
+      } catch (err) {
+        outputEl.innerText = 'Error: Invalid JSON arguments - ' + err.message;
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/execute', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tool: currentTool.name, args: parsedArgs })
+        });
+        const data = await res.json();
+        outputEl.innerText = JSON.stringify(data.result, null, 2);
+      } catch (err) {
+        // Fallback for static GitHub Pages demo mode
+        const mockResponses = {
+          mobile_devices: [{ serial: 'emulator-5554', state: 'device', model: 'Pixel_8_Pro', type: 'emulator' }],
+          mobile_tap: { success: true, action: 'tap', coordinates: parsedArgs, device: 'emulator-5554' },
+          mobile_type: { success: true, action: 'type', text: parsedArgs.text || 'test', device: 'emulator-5554' },
+          mobile_screenshot: { success: true, format: 'png_base64', resolution: '1080x2400', device: 'emulator-5554' },
+          workspace_tree: [{ name: 'src', type: 'directory' }, { name: 'package.json', type: 'file', size: 1024 }],
+          workspace_search: [{ file: 'core/src/server.js', line: 42, snippet: 'OmniMCP universal protocol router' }],
+          workspace_tokens: { estimatedTokens: 48, modelLimit: 128000, remainingTokens: 127952, percentUsed: 0.04 },
+          desktop_info: { platform: 'win32', architecture: 'x64', cpuCores: 8, memory: { totalGB: 16.0, usedGB: 8.4 } },
+          desktop_notify: { success: true, delivered: true, title: parsedArgs.title || 'Notification' },
+          memory_save: { success: true, key: parsedArgs.key || 'demo_key', updatedAt: new Date().toISOString() },
+          memory_recall: { found: true, key: parsedArgs.query || 'demo_key', value: 'Stored context from OmniMCP' }
+        };
+        outputEl.innerText = JSON.stringify(mockResponses[currentTool.name] || { success: true, status: 'Executed (Interactive Demo Mode)' }, null, 2);
+      }
+    });
+
+    renderToolsList();
+  </script>
+</body>
+</html>

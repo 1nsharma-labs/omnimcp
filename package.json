@@ -1,0 +1,37 @@
+{
+  "name": "@1nsharma-labs/omnimcp",
+  "version": "1.0.0",
+  "description": "The Universal MCP (Model Context Protocol) Hub & Autonomous Agent Workspace for Desktop, Mobile & CLI",
+  "main": "core/src/server/cli.js",
+  "bin": {
+    "omnimcp": "core/src/server/cli.js"
+  },
+  "type": "module",
+  "scripts": {
+    "start": "node core/src/server/cli.js serve",
+    "stdio": "node core/src/server/cli.js stdio",
+    "serve": "node core/src/server/cli.js serve",
+    "test": "node test/test_omnimcp.js"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "ai-agents",
+    "claude-desktop",
+    "cursor",
+    "mobile-automation",
+    "desktop-automation",
+    "workspace-intelligence",
+    "devops",
+    "open-source"
+  ],
+  "author": "1nsharma-labs",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/1nsharma-labs/omnimcp.git"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
